@@ -1,60 +1,48 @@
 #include "binary_trees.h"
-
+#include <stdbool.h>
 /**
-* tree_size - measures the size of a binary tree
-* @tree: pointer to the root node of the tree to measure the size
-* Return: size of a binary tree
-* If tree is NULL, the function must return 0
-**/
-size_t tree_size(const binary_tree_t *tree)
+ * count_nodes - counts number of nodes in binary tree
+ * @root: root of tree
+ * Return: number of nodes
+ */
+int count_nodes(const binary_tree_t *root)
 {
-	int count = 0;
-
-	if (tree == NULL)
-	{
+	if (root == NULL)
 		return (0);
-	}
-	count = 1 + tree_size((*tree).left) + tree_size((*tree).right);
-	return (count);
+	return (1 + count_nodes(root->left) + count_nodes(root->right));
 }
-
 /**
-* is_complete - checks if a binary tree is complete
-* @tree: pointer to the root node of the tree to check
-* @pos: position of node
-* @nodes: size of the tree
-* Return: 1 is tree is perfect, 0 if not or tree is NULL
-**/
-int is_complete(binary_tree_t *tree, int pos, int nodes)
+ * is_complete - checks if tree has size - 1 nodes
+ * @root: root of tree
+ * @index: index assigned to node
+ * @number_nodes: number of nodes
+ * Return: true if tree is complete, false otherwise
+ */
+bool is_complete(const binary_tree_t *root, int index, int number_nodes)
 {
-	int left, right;
-
-	if (tree == NULL)
-	{
-		return (1);
-	}
-	if (pos >= nodes)
-	{
-		return (0);
-	}
-	left = is_complete((*tree).left, 2 * pos + 1, nodes);
-	right = is_complete((*tree).right, 2 * pos + 2, nodes);
-	return (left * right);
+	if (root == NULL)
+		return (true);
+	if (index >= number_nodes)
+		return (false);
+	return (is_complete(root->left, 2 * index + 1, number_nodes) &&
+		is_complete(root->right, 2 * index + 2, number_nodes));
 }
-
 /**
-* binary_tree_is_complete - checks if a binary tree is complete
-* @tree: pointer to the root node of the tree to check
-* Return: 1 is tree is perfect, 0 if not or tree is NULL
-**/
+ * binary_tree_is_complete - checks if a binary tree is complete
+ * @tree: root of tree
+ * Return: 1 if tree is complete, 0 otherwise
+ */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	int nodes, pos = 0;
+	int node_count, index;
 
-	if (tree != NULL)
-	{
-		nodes = tree_size(tree);
-		return (is_complete((binary_tree_t *)tree, pos, nodes));
-	}
-	return (0);
+	if (!tree)
+		return (0);
+
+	node_count = count_nodes(tree);
+	index = 0;
+	if (is_complete(tree, index, node_count))
+		return (1);
+	else
+		return (0);
 }

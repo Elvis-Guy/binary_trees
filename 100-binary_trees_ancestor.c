@@ -1,37 +1,41 @@
 #include "binary_trees.h"
 
 /**
-* binary_trees_ancestor - finds the lowest common
-* ancestor of two nodes
-* @first: pointer to the first node
-* @second: pointer to the second node
-* Return: a pointer to the lowest common ancestor node of the two
-* given nodes. If no common ancestor was found returns NULL
-**/
-binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
-									 const binary_tree_t *second)
+ * search - Depth-first searches a tree.
+ * @tree: The pointer to the tree.
+ * @target: The pointer to the node to search for.
+ * Return: If found (1) or (0).
+ */
+int search(const binary_tree_t *tree, const binary_tree_t *target)
 {
-	binary_tree_t *tur = NULL, *rab = NULL;
+	if (!tree)
+		return (0);
+	if (tree->n == target->n)
+		return (1);
+	search(tree->left, target);
+	search(tree->right, target);
+	return (search(tree->left, target) + search(tree->right, target));
+}
 
-	if (first == NULL || second == NULL)
-	{
+/**
+ * binary_trees_ancestor - Finds the lowest common ancestor of two nodes.
+ * @first: The pointer to the first node.
+ * @second: The pointer to the second node.
+ * Return: The pointer to the lowest common ancestor or (NULL).
+ */
+binary_tree_t *binary_trees_ancestor(
+	const binary_tree_t *first, const binary_tree_t *second)
+{
+	binary_tree_t *lowest;
+
+	if (!first || !second)
 		return (NULL);
-	}
-
-	rab = (binary_tree_t *)second;
-	while (rab != NULL)
+	lowest = (binary_tree_t *)first;
+	while (lowest)
 	{
-		tur = (binary_tree_t *)first;
-		while (tur != NULL)
-		{
-			if (tur != rab)
-				tur = (*tur).parent;
-			else
-			{
-				return (tur);
-			}
-		}
-		rab = (*rab).parent;
+		if (search(lowest, second))
+			return (lowest);
+		lowest = lowest->parent;
 	}
 	return (NULL);
 }
